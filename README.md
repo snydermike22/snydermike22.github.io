@@ -1,6 +1,6 @@
 <h1>Neighborhood Map</h1>
 <p>Neighborhood Map Project for Udacity Front-end Web Development Nanodegree</p>
-<p><a href ="http://lei-clearsky.github.io/temp-repo-p5/">Demo</a></p>
+<p><a href ="http://lei-clearsky.github.io/neighborhood-map/">Demo</a></p>
 <h2>References:</h2>
 <ul>
 	<li><a href ="https://github.com/DawoonC/dw-neighborhood">DawoonC's DW Neighborhood</a></li>

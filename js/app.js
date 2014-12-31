@@ -70,7 +70,7 @@ function AppViewModel() {
 
   	// format and return most popular venues data 
   	// error handlings if no data is found
-  	self.computedTopPicks = ko.computed(function(){
+  	self.computedTopPicks = ko.computed(function() {
   		var tempTopPicks = self.topPicks();
 
   		for (var i in tempTopPicks) {
@@ -78,25 +78,25 @@ function AppViewModel() {
   			var photoPrefix = 'https://irs0.4sqi.net/img/general/';
   			var photoFullURL = 'http://placehold.it/100x100';
 
-  			if (!tempTopPicks[i].venue.contact.formattedPhone){
+  			if (!tempTopPicks[i].venue.contact.formattedPhone) {
   				tempTopPicks[i].formatedContact = 'No contact available';
   			}else{
   				tempTopPicks[i].formatedContact = tempTopPicks[i].venue.contact.formattedPhone;
   			}
 
-  			if (!tempTopPicks[i].tips){
+  			if (!tempTopPicks[i].tips) {
   				tempTopPicks[i].formatedTip = 'No reviews available';
   			}else{
   				tempTopPicks[i].formatedTip = tempTopPicks[i].tips[0].text;
   			}
 
-  			if (!tempTopPicks[i].venue.url){
+  			if (!tempTopPicks[i].venue.url) {
   				tempTopPicks[i].formatedUrl = 'No website available';
   			}else{
   				tempTopPicks[i].formatedUrl = tempTopPicks[i].venue.url;
   			}
 
-  			if (!tempTopPicks[i].venue.rating){
+  			if (!tempTopPicks[i].venue.rating) {
   				tempTopPicks[i].venue.formatedRating = '0.0';
   			}else{
   				tempTopPicks[i].venue.formatedRating = tempTopPicks[i].venue.rating;
@@ -122,7 +122,7 @@ function AppViewModel() {
 			var weatherType = list[i],
 			elements = document.getElementsByClassName( weatherType );
 
-			for (e = elements.length; e--;){
+			for (e = elements.length; e--;) {
 			    icons.set( elements[e], weatherType );
 			}
 		}
@@ -134,18 +134,18 @@ function AppViewModel() {
 	// and fires callback when value is updated
 	// reference: http://stackoverflow.com/questions/16250594/afterrender-for-html-binding
   	ko.bindingHandlers.afterHtmlRender = {
-		update: function(el, va, ab){
+		update: function(el, va, ab) {
 			ab().html && va()(ab().html);
 		}
 	}
 
 	// update function for forecasts list display
-	self.updateFObservable = function(){
+	self.updateFObservable = function() {
 		self.displayForecastsList(!self.displayForecastsList());
 	}
 
 	// update function for venues list display
-	self.updateVObservable = function(){
+	self.updateVObservable = function() {
 		self.displayVenuesList(!self.displayVenuesList());
 	}
 
@@ -290,7 +290,7 @@ function AppViewModel() {
 				var venueIDlist = []; // keep a list of all venues ID
 
 				// retrieve and set venue photo url to get photos for each venue
-				for(var i in self.topPicks()){
+				for(var i in self.topPicks()) {
 					var baseImgsURL = 'https://api.foursquare.com/v2/venues/';
 					var venueID = self.topPicks()[i].venue.id;
 					var venueName = self.topPicks()[i].venue.name;
@@ -340,22 +340,22 @@ function AppViewModel() {
  	 * @param {Array.<Object>} venueImgsURLlist A array to keep a list of all venues photo urls
  	 * @return {void}
  	 */
-	function setPhotosGroups (venuesPhotos, venueIDlist, venueImgsURLlist){
+	function setPhotosGroups (venuesPhotos, venueIDlist, venueImgsURLlist) {
 
 		var baseImgURL = 'https://irs3.4sqi.net/img/general/'; // base url to retrieve venue photos
 
 		// store venue photos data in 2D array
 		// use closure to keep i index in venuePhotos 2D array
-		for (var i in venueImgsURLlist){
+		for (var i in venueImgsURLlist) {
 			(function(i){
       			$.ajax({
       				url: venueImgsURLlist[i],
       				dataType: 'jsonp',
-      				success: function(data){
+      				success: function(data) {
 
       					var imgItems = data.response.photos.items;
 
-      					for (var j in imgItems){
+      					for (var j in imgItems) {
       						var venueImgURL = baseImgURL + 'width800' + imgItems[j].suffix;
       						var venueImgObj = {
       							href: venueImgURL,
@@ -391,7 +391,7 @@ function AppViewModel() {
 		$.ajax({
 			url: forecastURL,
 			dataType: 'jsonp',
-			success: function(data){
+			success: function(data) {
 				self.dailyForecasts(data.daily.data);
 				self.currentlyForecasts(data.currently);
 				self.currentlySkyicon(data.currently.icon);
@@ -405,7 +405,7 @@ function AppViewModel() {
 	 * @param {Object} venue A venue object 
  	 * @return {void}
  	 */
-	function setVenueInfowindow(venue){
+	function setVenueInfowindow(venue) {
 		var lat = venue.location.lat;
 		var lng = venue.location.lng;
 		var venueName = venue.name;
@@ -499,10 +499,10 @@ function AppViewModel() {
 	 * @param {Object} venueMarker A venue marker object 
  	 * @return {void}
  	 */
-	function selectedMarkerBounce(venueMarker){
-		if (venueMarker.getAnimation() == null){
+	function selectedMarkerBounce(venueMarker) {
+		if (venueMarker.getAnimation() == null) {
 			self.chosenMarker(venueMarker);
-			venueMarkers.forEach(function(marker){
+			venueMarkers.forEach(function(marker) {
 				marker.setAnimation(null);
 			});
 			
@@ -545,7 +545,7 @@ function AppViewModel() {
 	}
 
 	// initliaze neighborhood data when application is load
-	function initializeNeighborhood(neighborhood){
+	function initializeNeighborhood(neighborhood) {
 		getNeighborhood(neighborhood);
 	}
 

@@ -4,88 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 
-    <title>Google Map Project</title>
-    <!--CSS-->
-    <link href="css/swipebox.css" rel="stylesheet" type="text/css">
+    <title>Neighborhood Map</title>
+  
     <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css" />
     <link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
-    <link href="css/style-new.css" rel="stylesheet" type="text/css" />
-
-    <!--JS-->
-    <script src="js/jQuery.js"></script>
-    <script src="js/jquery.swipebox.js"></script>
-    <script src="js/skycons.js"></script>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script> 
-    <script src="js/knockout-3.2.0.js"></script>
-    <script src="js/app.js"></script>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
 
   </head>
   <body>
-    <div id="map-canvas"></div>
-    <div class="fixed-container">
-      <form class="form-inline" role="form">
-        <div class="form-group">
-          <div class="input-group">
-            <div class="input-group-addon">Find</div>
-            <input data-bind="value: exploreKeyword" type="search" name ="search" class="form-control" id="explore-venues" placeholder="Popular Places">
-          </div>             
+    <div class="col-md-12 TopPage">
+      <h4>Type in a State below in the form.  The current Temperature will appear below it as well as any Foursquare top Pick selections.</h4>
+      <ul> You can click on the marker on the map or on a Foursquare Selection to get more information. </ul>
+      <ul> You can also enter Places/Resturants/Stores or something else to narrow your criteria in the Info box for the mentioned City. It will narrow your Foursquare top picks</ul>
+      <ul> Underneath the Map will be recent New York Times articles with reference to the selected City and/or State.</ul>
+      
+    </div>
+    <div class="col-md-3">
+      <form class="form" role="form" id="form">
+      
+        <div class="CityStateInfo">City/State
+            <input data-bind="value: neighborhood" type="text" name ="search" class="InputForm" id="neighborhood-location" placeholder="" value="">
+        </div>  
+        <div class="CityStateInfo">Info
+            <input data-bind="value: exploreKeyword" type="text" name ="search" class="InputForm" id="explore-venues" placeholder="Places/Resturants/Stores/Themes etc..."> 
         </div>
-
-        <div class="form-group">
-          <div class="input-group">
-            <div class="input-group-addon">Near</div>
-            <input data-bind="value: neighborhood" type="search" name ="search" class="form-control" id="neighborhood-location" placeholder="Neighborhood">
-          </div>             
+        <br>
+        <div>
+            <button type="button">Click to Search</button>
         </div>
-
-        <button type="button" class="btn btn-default btn-md search-button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+          <div class="border">
+            <div><h4>Current Temperature</h4></div>
+            <div data-bind="text: currentlyForecasts().temperature" class="temp"></div><span>% Degrees</span>
+          </div>
+          <div>
+            <h4>Four Square Top Picks Below</h4>
+          </div>
       </form>
-
-      <div id="nh-info" class="nh-info-box group">
-        <div class="nh-formatted-address">
-          <span data-bind="text: formattedAddress"></span>
-
-          <div class="venues-box-showhide" data-bind="click:updateVObservable()"><span data-bind="css: {'glyphicon-plus': !displayVenuesList(), 'glyphicon-minus': displayVenuesList()}" class="glyphicon"></span></div>
-        </div>          
-
-        <div class="current-temp-box">
-          <div class="left">
-            <div class="right-now">Right Now</div>
-            <div data-bind="text: currentlyForecasts().temperature" class="current-temp"></div><span>&deg;</span>
-          </div>
-
-          <div class="right">
-            <div class="right-now-icon">
-              <canvas data-bind="css: currentlySkyicon(), afterHtmlRender: skycons()" width="64" height="64"></canvas>
-            </div>
-          </div>
-          
-          <div class="current-temp-showhide" data-bind="click:updateFObservable()"><span data-bind="css: {'glyphicon-plus': !displayForecastsList(), 'glyphicon-minus': displayForecastsList()}" class="glyphicon"></span></div>
         
-        </div>               
-      </div>
-
-      <div data-bind="visible: displayForecastsList, foreach: computedDailyForecasts()" id="forecast-listing" class="forecast-listing-box" style="display:none">
-        <div class="forecast-listing-item group">
-          <div class="left">
-            <div data-bind="text: formatedTime" class="day-name"></div>
-
-          </div>
-          <div class="middle">
-            <div class="day-icon">
-              <canvas data-bind="css: icon, afterHtmlRender:$parent.skycons()" width="64" height="64"></canvas>
-            </div>
-          </div>
-          <div class="right">
-            <div class="day-temp-range">
-              <span data-bind="text: temperatureMin"></span><span>&deg;</span> - <span data-bind="text: temperatureMax"></span><span>&deg;</span></div>
-            <div data-bind="text: summary" class="day-info"></div>
-          </div>
-
-        </div>
-      </div>
-
-      <div data-bind="visible: displayVenuesList" id="venues-listing" class="venues-listing-box" style="display:none"> 
+        <div data-bind="visible: displayVenuesList" id="venues-listing" style="display:none" class="venues-listing-box"> 
         <!-- ko foreach: computedTopPicks() -->
         <div data-bind="css:{'selected-venue-item': venue.id === $root.selectedVenue()}, click: $root.panToMarker" class="venue-listing-item group">
           <div class="left">
@@ -95,31 +51,42 @@
               <div data-bind="text: venue.location.formattedAddress" class="venue-address"></div>
             </div>
             <div class="venue-category">
-              <div class="glyphicon glyphicon-tag"></div>
+              <div></div>
               <div data-bind="text: venue.categories[0].name" class="content"></div>
             </div>
             <div class="venue-contact">
-              <div class="glyphicon glyphicon-earphone"></div>
+              <div></div>
               <div data-bind="text: formatedContact" class="content"></div>
             </div>
             <div class="venue-website">
-              <div class="glyphicon glyphicon-globe"></div>
+              <div></div>
               <div data-bind="text: formatedUrl" class="content"></div>
             </div>
             <div class="venue-review">
-              <div class="glyphicon glyphicon-user"></div>
+              <div></div>
               <div data-bind="text: formatedTip" class="content"></div>
             </div>
           </div>
-          <div class="right">
-            <img data-bind="attr: {src: photoFullURL, id: venue.id}" class="featured-photo"/>
+          <div class="Pic">
+            <img data-bind="attr: {src: photoFullURL, id: venue.id}" class="Pic"/>
           </div>
         </div>  
         <!-- /ko -->         
 
       </div>
-
     </div>
-
+    <div class="col-md-9"> 
+      <div id="map-canvas"></div>
+        <div class="grey">
+          <div class="nyTimes">
+          <h3 id="nytimes-header">New York Times Articles</h3>
+          <span id="nytimes-articles"> </span>
+          </div>
+        </div>
+    </div>
+    <script src="js/jQuery.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>  
+    <script src="js/knockout-3.2.0.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>

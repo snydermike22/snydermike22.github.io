@@ -1,7 +1,6 @@
-/**
- * @fileoverview View Model for neighborhood map application
- * @author sportzhulei@gmail.com (Lei Zhu)
- */
+$(document).ready(function(){
+    $(window).scrollTop(0);
+});
 
 function AppViewModel() {
 
@@ -18,55 +17,39 @@ function AppViewModel() {
 		infowindow;
 
 	var venueMarkers = [];
-	var defaultExploreKeyword = 'best nearby';
-	var defaultNeighborhood = 'new york';
+	var defaultNeighborhood = 'Connecticut';
 	var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-	var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 	self.exploreKeyword = ko.observable(''); // explore neighborhood keywords
 	self.neighborhood = ko.observable(defaultNeighborhood);	// neighborhood location
 	self.formattedAddress = ko.observable('');	// formatted neighborhood location address
 	self.topPicks = ko.observableArray('');	// most popular foursquare picks depending on neighborhood keywords and location
-	self.dailyForecasts = ko.observableArray(''); // one week daily forecasts depeding on neighborhood location
 	self.currentlyForecasts = ko.observable(''); // current weather forecast
-	self.currentlySkyicon = ko.observable(''); // current weather skycon
 	self.photosAPIurl = ko.observableArray(''); // foursquare photos urls
 	self.selectedVenue = ko.observable(''); // selected venue info
 	self.chosenMarker = ko.observable(''); // selected marker info
-	self.displayForecastsList = ko.observable('false'); // boolean value for forecast list display
 	self.displayVenuesList = ko.observable('false'); // boolean value fore venues list display
 
-	/**
- 	 * Get month name according to javascript getMonth() method return value
- 	 * @return {string}
- 	 */
-	Date.prototype.getMonthName = function() {
-		return months[ this.getMonth() ];
-	};
+// NY Times
+	var $nytHeaderElem = $('#nytimes-header');
+	var $nytElem = $('#nytimes-articles');
+	$nytHeaderElem.text('New York Times Articles About ' + defaultNeighborhood);
 
-	/**
- 	 * Get day name according to javascript getDay() method return value
- 	 * @return {string}
- 	 */
-	Date.prototype.getDayName = function() {
-		return days[ this.getDay() ];
-	};
 
-	// format and return one week daily forecasts data 
-  	self.computedDailyForecasts = ko.computed(function(){
+	var nytimesURL = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + defaultNeighborhood + '&sort=newest&api-key=a36d6720b0e6e27fde6b20dc77045c40:0:71510927';
 
-  		var tempDailyForecasts = self.dailyForecasts();
-  		for (var i in tempDailyForecasts) {
-  			var date = new Date(tempDailyForecasts[i].time * 1000);
-  			// var formatedTime = days[date.getDay()] + ', ' + months[date.getMonth()] + ' ' + date.getDate();
-  			// var formatedTime = date.getDayName() + ', ' + date.getMonthName() + ' ' + date.getDate();
-  			var formatedTime = date.getDayName();
+	$.getJSON(nytimesURL, function(data) {
 
-  			tempDailyForecasts[i]['formatedTime'] = formatedTime;
-  		}
+    articles = data.response.docs;
+    for (var i = 0; i < articles.length; i++) {
+        var article = articles[i];
+        $nytElem.append('<li class="article">' + '<a href="'+article.web_url+'">'+article.headline.main+'</a>' + '<p>' + article.snippet + '</p>' + '</li>');
+    };
 
-  		return tempDailyForecasts;
-  	});
+}).error(function(e) {
+    $nytHeaderElem.text('New York Times Articles Could Not Be Loaded');
+});
+
 
   	// format and return most popular venues data 
   	// error handlings if no data is found
@@ -76,7 +59,6 @@ function AppViewModel() {
   		for (var i in tempTopPicks) {
 
   			var photoPrefix = 'https://irs0.4sqi.net/img/general/';
-  			var photoFullURL = 'http://placehold.it/100x100';
 
   			if (!tempTopPicks[i].venue.contact.formattedPhone) {
   				tempTopPicks[i].formatedContact = 'No contact available';
@@ -113,58 +95,41 @@ function AppViewModel() {
   		return tempTopPicks;
   	});
 
-	// setup and initialize skycons canvas display
-  	self.skycons = function() {
-  		var icons = new Skycons(),
-          	list  = ["clear-day", "clear-night", "partly-cloudy-day", "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind", "fog"];
-		
-		for(var i = list.length; i--; ) {
-			var weatherType = list[i],
-			elements = document.getElementsByClassName( weatherType );
 
-			for (e = elements.length; e--;) {
-			    icons.set( elements[e], weatherType );
-			}
-		}
-
-		icons.play();
-  	}
-	
-	// custom binding handler that tracks html binding changes 
-	// and fires callback when value is updated
-	// reference: http://stackoverflow.com/questions/16250594/afterrender-for-html-binding
-  	ko.bindingHandlers.afterHtmlRender = {
-		update: function(el, va, ab) {
-			ab().html && va()(ab().html);
-		}
-	}
-
-	// update function for forecasts list display
-	self.updateFObservable = function() {
-		self.displayForecastsList(!self.displayForecastsList());
-	}
-
-	// update function for venues list display
-	self.updateVObservable = function() {
-		self.displayVenuesList(!self.displayVenuesList());
-	}
-
-	// takes user's input in neighborhood address
-	// update displays for map, weather forecasts and popular venues
+	// updates City and NY Times information after input into field
 	self.computedNeighborhood = function() {
 		if (self.neighborhood() != '') {
 			if (venueMarkers.length > 0)
 				removeVenueMarkers();
 			getNeighborhood(self.neighborhood());
-		}	
+			$nytHeaderElem.text('New York Times Articles About ' + (self.neighborhood()));
+
+
+			var nytimesURL = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + self.neighborhood() + '&sort=newest&api-key=a36d6720b0e6e27fde6b20dc77045c40:0:71510927';
+			$nytElem.text("");
+			$.getJSON(nytimesURL, function(data) {
+
+    		articles = data.response.docs;
+    			for (var i = 0; i < articles.length; i++) {
+        		var article = articles[i];
+        		$nytElem.append('<li class="article">' + '<a href="'+article.web_url+'">'+article.headline.main+'</a>' + '<p>' + article.snippet + '</p>' + '</li>');
+   					};
+   		}).error(function(e) {
+    $nytHeaderElem.text('New York Times Articles Could Not Be Loaded');
+});
+
+
+		}
 	};
 
+
+
 	// when user update neighborhood address in input bar,
-	// update displays for map, weather forecasts and popular venues
+	// update displays for map, and popular venues
 	self.neighborhood.subscribe(self.computedNeighborhood);	
 
 	// when user update explore keyword in input bar,
-	// update displays for map, weather forecasts and popular venues
+	// update displays for map, and popular venues
 	self.exploreKeyword.subscribe(self.computedNeighborhood);
 
 	/**
@@ -201,46 +166,6 @@ function AppViewModel() {
 		venueMarkers = [];
 	}
 
-	/**
- 	 * Create a neighborhood marker in a shape of start in black color
- 	 * for neighborhood address user input in the address input bar
- 	 * @param {Object} place A place object returned by Google Map place callback
- 	 * @return {void}
- 	 */ 
-	function createNeighborhoodMarker(place) {
-
-		var placeName = place.name;
-
-		var blackStar = {
-		    path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
-		    fillColor: 'black',
-		    fillOpacity: 1,
-		    scale: 0.2
-		};
-
-		var marker = new google.maps.Marker({
-			map: map,
-			position: place.geometry.location,
-			title: placeName,
-			icon: blackStar
-		});
-
-		google.maps.event.addListener(marker, 'click', function() {
-			infowindow.setContent(placeName);
-			infowindow.open(map, marker);
-		});
-
-		venueMarkers.push(marker); // push this marker to venueMarker array
-
-	}
-
-	/**
- 	 * Get best nearby neighborhood venues data from foursquare API,
- 	 * get forecasts data from forecast.io API
- 	 * create venues markers on map
- 	 * @param {Object} place A place object returned by Google Map place callback
- 	 * @return {void}
- 	 */
 	function getNeighborhoodVenues(place) {
 		infowindow = new google.maps.InfoWindow();
 		placeLat = place.geometry.location.k;
@@ -252,7 +177,7 @@ function AppViewModel() {
 		map.setCenter(newNeighborhood);
 
 		// create one marker for neighborhood address user input
-		createNeighborhoodMarker(place);
+//		createNeighborhoodMarker(place);
 
 		// get nearby venues based on explore keywords and neighborhood address
 		getFoursquareData(); 	
@@ -277,7 +202,7 @@ function AppViewModel() {
  	 */
 	function getFoursquareData() {
 		var foursquareBaseURL = 'https://api.foursquare.com/v2/venues/explore?';
-  		var foursquareID = 'client_id=T3VKC34CMHTDB5YPR3TRA044A51EHCMPBJII433EB1TXWH1A&client_secret=XTWLWF52NASGLCULU0MF1YV1300CC0IDLW4DQXV2I3ROVDOC';
+  		var foursquareID = 'client_id=S2EMNUJJK1YLQSOOZRAUCDAGAJBYPKUQ0LJ22YGXNIKJ3Q2E&client_secret=S1SC00UAMLUAI5D3NYIM1K10QPQR4BINK4LBFZLZRGQYFRLM';
   		var neighborhoodLL = '&ll=' + placeLat + ',' + placeLon;
   		var query = '&query=' + self.exploreKeyword();
   		var foursquareURL = foursquareBaseURL + foursquareID + '&v=20130815&venuePhotos=1' + neighborhoodLL + query;
@@ -299,21 +224,6 @@ function AppViewModel() {
 					venueIDlist.push(venueID);
 				}
 
-				// create empty 2D array to store foursquare venue photos data 
-	      		function get2DArray(size) {
-				    size = size > 0 ? size : 0;
-				    var arr = [];
-				    while(size--) {
-				        arr.push([]);
-				    }
-				    return arr;
-				}
-
-				var venuesPhotos = get2DArray(venueIDlist.length);
-
-				// set venue photos groups for swipebox lightbox display
-				setPhotosGroups(venuesPhotos, venueIDlist, venueImgsURLlist);
-
 	      		// create venue markers
 	      		for (var i in self.topPicks()) {
 
@@ -332,59 +242,12 @@ function AppViewModel() {
       	});
 	}
 
-	/**
- 	 * set venue photos groups for swipebox lightbox display
- 	 * create venues markers on map
- 	 * @param {Array.<Object>} venuesPhotos A Empty 2D array to keep track of venue photos data
- 	 * @param {Array.<Object>} venueIDlist An array to keep a list of all venues IDs
- 	 * @param {Array.<Object>} venueImgsURLlist A array to keep a list of all venues photo urls
- 	 * @return {void}
- 	 */
-	function setPhotosGroups (venuesPhotos, venueIDlist, venueImgsURLlist) {
 
-		var baseImgURL = 'https://irs3.4sqi.net/img/general/'; // base url to retrieve venue photos
-
-		// store venue photos data in 2D array
-		// use closure to keep i index in venuePhotos 2D array
-		for (var i in venueImgsURLlist) {
-			(function(i){
-      			$.ajax({
-      				url: venueImgsURLlist[i],
-      				dataType: 'jsonp',
-      				success: function(data) {
-
-      					var imgItems = data.response.photos.items;
-
-      					for (var j in imgItems) {
-      						var venueImgURL = baseImgURL + 'width800' + imgItems[j].suffix;
-      						var venueImgObj = {
-      							href: venueImgURL,
-      							title: venueName
-      						};
-      						venuesPhotos[i].push(venueImgObj);
-      					}
-      				}
-      			});
-
-      		})(i);
-
-      		var venueIDphotos = '#' + venueIDlist[i];
-      		
-      		// setup swipebox photo groups click function
-  			$(venueIDphotos).click(function( e ) {
-  				e.preventDefault();
-  				var venueIDlistIndex = venueIDlist.indexOf(event.target.id);
-  				$.swipebox(venuesPhotos[venueIDlistIndex]);
-  			});
-		}
-	}
-
-	// get forecasts data from forecast.io API ajax call
-	// use jsonp data type to avoid cross domain error
+	// get forecasts data from forecast.io API 
 	function getForecastData() {
 		
       	var forecastBaseURL = 'https://api.forecast.io/forecast/';
-		var forecastAPIkey = '96556a5d8a419fc71902643785e74d30';
+		var forecastAPIkey = '86f23490cf06571a502e3fe671ad188d';
 		var formattedLL = '/'+ placeLat + ',' + placeLon;
 		var forecastURL = forecastBaseURL + forecastAPIkey + formattedLL;
 
@@ -392,19 +255,14 @@ function AppViewModel() {
 			url: forecastURL,
 			dataType: 'jsonp',
 			success: function(data) {
-				self.dailyForecasts(data.daily.data);
 				self.currentlyForecasts(data.currently);
-				self.currentlySkyicon(data.currently.icon);
 			}
 		});
 	}
 
-	/**
- 	 * set a venue's marker infowindow
- 	 * error handlings if no data is found
-	 * @param {Object} venue A venue object 
- 	 * @return {void}
- 	 */
+	
+//  set a venue's marker infowindow
+
 	function setVenueInfowindow(venue) {
 		var lat = venue.location.lat;
 		var lng = venue.location.lng;
@@ -435,16 +293,16 @@ function AppViewModel() {
 							+ venueRating
 							+ '</span>'
 							+ '</div>'
-							+ '<div class="venue-category"><span class="glyphicon glyphicon-tag"></span>'
+							+ '<div class="venue-category"><span></span>'
 							+ venueCategory
 							+ '</div>'
-							+ '<div class="venue-address"><span class="glyphicon glyphicon-home"></span>'
+							+ '<div class="venue-address"><span></span>'
 							+ venueAddress
 							+ '</div>'
-							+ '<div class="venue-contact"><span class="glyphicon glyphicon-earphone"></span>'
+							+ '<div class="venue-contact"><span></span>'
 							+ venueContact
 							+ '</div>'  
-							+ '<div class="venue-url"><span class="glyphicon glyphicon-globe"></span>'
+							+ '<div class="venue-url"><span></span>'
 							+ venueUrl
 							+ '</div>'  						    						    						
 							+ '</div>';
@@ -457,15 +315,10 @@ function AppViewModel() {
 
 	}
 
-	/**
- 	 * create a venue marker on map
- 	 * when this venue marker is clicked on map, 
- 	 * open marker infowindow, set marker bounce animation
- 	 * scroll to this venue item on venues list,
- 	 * panto this marker on map
-	 * @param {Object} venue A venue object 
- 	 * @return {void}
- 	 */
+
+// 	 create a venue marker on map and bounce
+
+ 
 	function createVenueMarker(venue) {
 
 		var venueInfo = setVenueInfowindow(venue);
@@ -584,3 +437,4 @@ $(function() {
 
 
 });
+

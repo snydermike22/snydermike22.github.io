@@ -2,6 +2,10 @@
 
 Instructions on how to use my Neighborhood Map Page.
 
+Fork the repository
+
+Then load the index.html into you chrome browser.
+
 Since I live in Connecticut it starts you off in CT.  There is a google map with a star in the center of Ct.
 
 I also show you the current temperature for CT

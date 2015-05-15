@@ -34,7 +34,7 @@
         </div>
           <div class="border">
             <div><h4>Current Temperature</h4></div>
-            <div data-bind="text: currentlyForecasts().temperature" class="temp"></div><span>% Degrees</span>
+            <div data-bind="text: currentlyForecast().temperature" class="temp"></div><span>% Degrees</span>
           </div>
           <div>
             <h4>Four Square Top Picks Below</h4>
@@ -42,33 +42,33 @@
       </form>
         
         <div data-bind="visible: displayVenuesList" id="venues-listing" style="display:none" class="venues-listing-box"> 
-        <!-- ko foreach: computedTopPicks() -->
-        <div data-bind="css:{'selected-venue-item': venue.id === $root.selectedVenue()}, click: $root.panToMarker" class="venue-listing-item group">
+         <!-- ko foreach: topPicks() -->
+        <div data-bind="css:{'selected-venue-item': id === $root.selectedVenue()}, click: $root.panToMarker" class="venue-listing-item group">
           <div class="left">
-            <div data-bind="text: venue.name" class="venue-name"></div>
+            <div data-bind="text: name" class="venue-name"></div>
             <div class="venue-sub group">
-              <div class="venue-rating"><span data-bind="text: venue.formatedRating" class="badge"></span></div>
-              <div data-bind="text: venue.location.formattedAddress" class="venue-address"></div>
+              <div class="venue-rating"><span data-bind="text: rating" class="badge"></span></div>
+              <div data-bind="text: formattedAddress" class="venue-address"></div>
             </div>
             <div class="venue-category">
-              <div></div>
-              <div data-bind="text: venue.categories[0].name" class="content"></div>
+              
+              <div data-bind="text: categories" class="content"></div>
             </div>
             <div class="venue-contact">
-              <div></div>
-              <div data-bind="text: formatedContact" class="content"></div>
+              
+              <div data-bind="text: formattedPhone" class="content"></div>
             </div>
             <div class="venue-website">
-              <div></div>
-              <div data-bind="text: formatedUrl" class="content"></div>
+              
+              <div data-bind="text: url" class="content"></div>
             </div>
             <div class="venue-review">
-              <div></div>
-              <div data-bind="text: formatedTip" class="content"></div>
+              
+              <div data-bind="text: tips" class="content"></div>
             </div>
           </div>
           <div class="Pic">
-            <img data-bind="attr: {src: photoFullURL, id: venue.id}" class="Pic"/>
+            <img data-bind="attr: {src: featuredPhoto, id: id}" class="Pic"/>
           </div>
         </div>  
         <!-- /ko -->         

@@ -2,9 +2,9 @@
 
 Instructions on how to use my Neighborhood Map Page.
 
-Fork the repository
+Visit snydermike22.github.io to use it interactively
 
-Then load the index.html into you chrome browser.
+Read below for more information on how to use the map before you begin.
 
 Since I live in Connecticut it starts you off in CT.  There is a google map with a star in the center of Ct.
 

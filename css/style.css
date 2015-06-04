@@ -152,24 +152,41 @@ padding-bottom: 10px;
 }
 
 
+
 @media only screen and (max-width : 768px) {
 
+  .fixed-container{
+    width:100%;
+  }
 
   .search-button{
     display:none;
   }
 
-  .group{
+  .form-group{
     margin-bottom:5px;
   }
 
-.left{
+  .nh-info-box{
+    width:300px;
+    font-size:14px;
+    position:fixed;
+    bottom:0;
+  }
+
+  .nh-info-box .current-temp-box .left .right-now{
     display:none;
   }
-.left{
+
+  .nh-info-box .current-temp-box .right .right-now-icon{
+    display:none;
+  }
+
+  .nh-info-box .current-temp-box .left .current-temp{
     font-size:20px;
   }
-.venues-listing-box{
+
+  .forecast-listing-box, .venues-listing-box{
     width:100%;
   }
 
@@ -182,10 +199,16 @@ padding-bottom: 10px;
     width:90%;
   }
 
+  .forecast-listing-item .right{
+    width:50%;
+  }
+
 }
 
 @media only screen and (max-width : 320px) {
-
+  .fixed-container{
+    width:100%;
+  }
   .venues-listing-box{
     max-width: 310px;
   }
@@ -193,10 +216,12 @@ padding-bottom: 10px;
   .venue-listing-item .left{
     width:60%;
   }
-  .venue-listing-item .Pic{
+  .venue-listing-item .right{
     width:40%;
   }
-
+  .forecast-listing-item .middle .day-icon{
+    display:none;
+  }
   .venue-listing-item .left .venue-sub .venue-address{
     width:60%;
   }
@@ -207,6 +232,19 @@ padding-bottom: 10px;
   }
 
 }
+
+
+
+/* Medium Devices, Desktops 
+@media only screen and (min-width : 992px) {
+  
+}
+*/ 
+/* Large devices (large desktops, 1200px and up) 
+@media (min-width: 1200px) {
+}
+*/ 
+
 
 
 

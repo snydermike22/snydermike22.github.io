@@ -1,4 +1,4 @@
-
+// Sets the Venue data
 var Venue = function(data, foursquareID) {
 	
 	this.id = data.venue.id;
@@ -21,9 +21,9 @@ var Venue = function(data, foursquareID) {
 	this.rating = this.getRating(data);
 	this.featuredPhoto = this.getFeaturedPhoto(data);
 
-}
+};
 
-
+//Getting all the info below for the data to populate the markers when clicked
 Venue.prototype = {
 
 	getPhotoAlbumnURL: function(data, foursquareID) {
@@ -66,7 +66,7 @@ Venue.prototype = {
   			return this.photoPrefix + 'width100' + this.photoSuffix;
 		}
 	}
-}
+};
 
 function AppViewModel() {
 
@@ -77,11 +77,9 @@ function AppViewModel() {
 		placeLon,
 		bounds,
 		service,
-		marker,
 		infowindow;
 
-	var venueMarkers = [];
-	var defaultExploreKeyword = 'best nearby';
+// Setting default to CT where I live
 	var defaultNeighborhood = 'Connecticut';
 	var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -95,25 +93,6 @@ function AppViewModel() {
 	self.displayForecastsList = ko.observable('false'); 
 	self.displayVenuesList = ko.observable('false'); 
 
-// NY Times
-	var $nytHeaderElem = $('#nytimes-header');
-	var $nytElem = $('#nytimes-articles');
-	$nytHeaderElem.text('New York Times Articles About ' + defaultNeighborhood);
-
-
-	var nytimesURL = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + defaultNeighborhood + '&sort=newest&api-key=a36d6720b0e6e27fde6b20dc77045c40:0:71510927';
-
-	$.getJSON(nytimesURL, function(data) {
-
-    articles = data.response.docs;
-    for (var i = 0; i < articles.length; i++) {
-        var article = articles[i];
-        $nytElem.append('<li class="article">' + '<a href="'+article.web_url+'">'+article.headline.main+'</a>' + '<p>' + article.snippet + '</p>' + '</li>');
-    };
-
-}).error(function(e) {
-    $nytHeaderElem.text('New York Times Articles Could Not Be Loaded');
-});
 
 
 	Date.prototype.getMonthName = function() {
@@ -123,15 +102,15 @@ function AppViewModel() {
 
 	
   	ko.bindingHandlers.afterHtmlRender = {
-		update: function(el, va, ab) {
+		update: function(va, ab) {
 			ab().html && va()(ab().html);
 		}
-	}
+	};
 
 
 	self.updateVObservable = function() {
 		self.displayVenuesList(!self.displayVenuesList());
-	}
+	};
 
 	self.computedNeighborhood = function() {
 
@@ -139,21 +118,7 @@ function AppViewModel() {
 			removeVenueMarkers();
 			self.topPicks([]);
 			getNeighborhood(self.neighborhood());
-			$nytHeaderElem.text('New York Times Articles About ' + (self.neighborhood()));
-
-
-			var nytimesURL = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + self.neighborhood() + '&sort=newest&api-key=a36d6720b0e6e27fde6b20dc77045c40:0:71510927';
-			$nytElem.text("");
-			$.getJSON(nytimesURL, function(data) {
-
-    		articles = data.response.docs;
-    			for (var i = 0; i < articles.length; i++) {
-        		var article = articles[i];
-        		$nytElem.append('<li class="article">' + '<a href="'+article.web_url+'">'+article.headline.main+'</a>' + '<p>' + article.snippet + '</p>' + '</li>');
-   					};
-   		}).error(function(e) {
-    $nytHeaderElem.text('New York Times Articles Could Not Be Loaded');
-});	
+			
 		} 
 		
 	};
@@ -179,7 +144,7 @@ function AppViewModel() {
 		map.panTo(venuePosition);
 		selectedMarkerBounce(venue.marker);
 
-	}
+	};
 
 
 	function removeVenueMarkers() {
@@ -195,7 +160,7 @@ function AppViewModel() {
 
 	}
 
-
+// Creating the Neighborhood Marker Star for center of map
 	function createNeighborhoodMarker(place) {
 
 		var placeName = place.name;
@@ -227,7 +192,7 @@ function AppViewModel() {
 
 	}
 
-
+// Gathering the data for the Neighborhood Venues
 	function getNeighborhoodVenues(place) {
 
 		infowindow = new google.maps.InfoWindow();
@@ -243,9 +208,9 @@ function AppViewModel() {
 		self.selectedMarker().setAnimation(null); 
 		});
 
-	};
+	}
 
-
+// Getting the foursquare data with my api key and formatting it with ajax
  	function getFoursquareData() {
 
 		var foursquareBaseURL = 'https://api.foursquare.com/v2/venues/explore?';
@@ -272,7 +237,7 @@ function AppViewModel() {
 
 
 				var tempBounds = data.response.suggestedBounds;
-				if (tempBounds != undefined) {
+				if (tempBounds !== undefined) {
 					bounds = new google.maps.LatLngBounds(
 						new google.maps.LatLng(tempBounds.sw.lat, tempBounds.sw.lng),
 						new google.maps.LatLng(tempBounds.ne.lat, tempBounds.ne.lng));
@@ -289,6 +254,7 @@ function AppViewModel() {
 		});
 	}
  
+ // Getting the image for the foursquare data
  	 function setPhotoAlbumns (venueItem) {
 
 		var baseImgURL = 'https://irs3.4sqi.net/img/general/'; // base url to retrieve venue photos
@@ -326,7 +292,7 @@ function AppViewModel() {
 		});
 	}
 
-
+// Getting the forecast data for the current city Temp.  Using my api key.
 	function getForecastData() {
 		
       	var forecastBaseURL = 'https://api.forecast.io/forecast/';
@@ -340,7 +306,7 @@ function AppViewModel() {
 			success: function(data) {
 
 				var initialForecastDailyData = data.daily.data;
-					initialForecastDailyData.forEach(function(forecastItem){
+					initialForecastDailyData.forEach(function(){
 
 				});
 
@@ -349,43 +315,20 @@ function AppViewModel() {
 
       		error: function( data ) {
       			$('.current-temp-box').html('<p>Error retrieving forecast data! Try refresh page later.</p>');
-      			$('#forecast-API-error').html('<h2>There are errors when retrieving forecast data. Please try refresh page later.</h2>' 
-      											+ '<p>Status: ' + data.status + '</p>'
-      											+ '<p>Error Type: ' + data.statusText + '</p>');
+      			$('#forecast-API-error').html('<h2>There are errors when retrieving forecast data. Please try refresh page later.</h2>' + '<p>Status: ' + data.status + '</p>' + '<p>Error Type: ' + data.statusText + '</p>');
       		}
 		});
 	}
 
-
+// Setting the info for the Venue Windows
 	function setVenueInfowindowStr(venue) {
-			var contentString = '<div class="venue-infowindow">' 
-							+ '<div class="venue-name">'
-							+ '<a href ="' + venue.foursquareUrl + '">'
-							+ venue.name
-							+ '</a>'
-							+ '<span class="venue-rating badge">'
-							+ venue.rating
-							+ '</span>'
-							+ '</div>'
-							+ '<div class="venue-category">'
-							+ venue.categories
-							+ '</div>'
-							+ '<div class="venue-address">'
-							+ venue.formattedAddress
-							+ '</div>'
-							+ '<div class="venue-contact">'
-							+ venue.formattedPhone
-							+ '</div>'  
-							+ '<div class="venue-url">'
-							+ venue.url
-							+ '</div>'  						    						    						
-							+ '</div>';
+			var contentString = '<div class="venue-infowindow">' + '<div class="venue-name">'+ '<a href ="' + venue.foursquareUrl + '">'+ venue.name+ '</a>' + '<span class="venue-rating badge">' + venue.rating + '</span>' + '</div>' + '<div class="venue-category">' + venue.categories + '</div>' + '<div class="venue-address">' + venue.formattedAddress + '</div>' + '<div class="venue-contact">' + venue.formattedPhone + '</div>'+ '<div class="venue-url">' + venue.url + '</div>' + '</div>';
 
 		return	contentString;
 
 	}
 
-
+// Creating the markers for the Venues on the map
 	function createVenueMarker(venue) {
 		var venueInfowindowStr = setVenueInfowindowStr(venue);
 		var venuePosition = new google.maps.LatLng(venue.lat, venue.lon);
@@ -421,10 +364,10 @@ function AppViewModel() {
 
 	}
 
-
+// Setting the marker to bouce when its clicked.
 	function selectedMarkerBounce(venueMarker) {
 
-		if (venueMarker.getAnimation() == null) {
+		if (venueMarker.getAnimation() === null) {
 
 			self.selectedMarker(venueMarker);
 
@@ -436,7 +379,7 @@ function AppViewModel() {
 		}
 	}
 
-
+// Error handling.
 	function getNeighborhoodCallback(results, status) {
 
 
@@ -452,7 +395,7 @@ function AppViewModel() {
 	    }
 	}
 
-
+// Getting current neighborhood
 	function getNeighborhood(neighborhood) {
 
 
@@ -470,7 +413,7 @@ function AppViewModel() {
 	function initializeNeighborhood(neighborhood) {
 		getNeighborhood(neighborhood);
 	}
-
+// initiazlizg the map
 	function initializeMap() {
 
 		mapOptions = {
@@ -487,10 +430,10 @@ function AppViewModel() {
 		
 		$('#map-canvas').height($(window).height());
 
-	};
+	}
 
 
-	window.addEventListener('resize', function(e) {
+	window.addEventListener('resize', function() {
     	
 		map.fitBounds(bounds);
     	
@@ -502,7 +445,7 @@ function AppViewModel() {
 
 	initializeNeighborhood(defaultNeighborhood);
 
-};
+}
 
 $(function() {
 

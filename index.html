@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  <script src="offline/offline.min.js"></script>
+
+
+<link rel="stylesheet" href="offline/themes/offline-theme-chrome.css" />
+<link rel="stylesheet" href="offline/themes/offline-language-english.css" />
+
+<script>
+
+var run = function(){
+ if (Offline.state === 'down')
+ Offline.check();
+ }
+
+setInterval(run, 5000);
+</script>
+
     <meta charset="UTF-8" />
+    <meta name=viewport content='width=700'>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 
     <title>Neighborhood Map</title>
@@ -16,7 +33,6 @@
       <h4>Type in a State below in the form.  The current Temperature will appear below it as well as any Foursquare top Pick selections.</h4>
       <ul> You can click on the marker on the map or on a Foursquare Selection to get more information. </ul>
       <ul> You can also enter Places/Resturants/Stores or something else to narrow your criteria in the Info box for the mentioned City. It will narrow your Foursquare top picks</ul>
-      <ul> Underneath the Map will be recent New York Times articles with reference to the selected City and/or State.</ul>
       
     </div>
     <div class="col-md-3">
@@ -78,15 +94,12 @@
     <div class="col-md-9"> 
       <div id="map-canvas"></div>
         <div class="grey">
-          <div class="nyTimes">
-          <h3 id="nytimes-header">New York Times Articles</h3>
-          <span id="nytimes-articles"> </span>
-          </div>
+          
         </div>
     </div>
     <script src="js/jQuery.js"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>  
     <script src="js/knockout-3.2.0.js"></script>
-    <script src="js/minapp.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>

@@ -1,5 +1,18 @@
 ## Neighborhood Map
 
+Recent fixes due to latest submission.
+
+Added Gulp per feedback suggestion
+Added offline per feedback suggestion so when internet is down you get a message
+Removed NY Times articles reference
+Used JShint to remove many, many, many warnings and to fix code.  There are still some but its way better
+Added comments to my javascript file per reviewers suggestion
+Made is more scalable for small screen devices. Its nowhere near perfect but its much better than it was.
+
+
+
+
+
 Instructions on how to use my Neighborhood Map Page.
 
 Visit snydermike22.github.io to use it interactively
@@ -18,6 +31,15 @@ You can change the City and State and you can also put in suggestions to narrow 
 Stores or Bars or Resturant.
 
 If you change the City/State to say California the FourSquare suggestions and Temperature and the New York Times articles will change to California.
+
+Recent fixes due to latest submission.
+
+Added Gulp per feedback suggestion
+Added offline per feedback suggestion
+Removed NY Times articles reference
+Used JShint to remove many, many, many warnings and to fix code
+Added comments to my javascript file per reviewers suggestion
+
 
 
 These are things I did for the Neighborhood Map Project.
